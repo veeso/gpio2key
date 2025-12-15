@@ -16,7 +16,7 @@ pub struct Args {
     /// log level (error, warn, info, debug, trace)
     #[argh(option, short = 'l', default = "LogLevel::Info")]
     pub log_level: LogLevel,
-    /// enable this flag on Raspberry Pi boards
+    /// enable this flag on Raspberry Pi boards to enable pull-up gpio configuration
     #[argh(switch, short = 'r')]
     pub raspberry: bool,
 }

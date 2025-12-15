@@ -8,7 +8,6 @@
 [![conventional-commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits&logoColor=white)](https://conventionalcommits.org)
 
 [![ci](https://github.com/veeso/gpio2key/actions/workflows/ci.yml/badge.svg)](https://github.com/veeso/gpio2key/actions)
-[![coveralls](https://coveralls.io/repos/github/veeso/gpio2key/badge.svg)](https://coveralls.io/github/veeso/gpio2key)
 
 ## Introduction
 
