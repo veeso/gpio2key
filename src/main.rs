@@ -111,9 +111,8 @@ fn log_config(config: &Config) {
         info!("    GPIO: {}", key.gpio);
         info!("    Keycode: {}", key.keycode);
         if let Some(debounce) = key.debounce() {
-            info!("    Debounce (ms): {}", debounce.as_micros());
+            info!("    Debounce (ms): {}", debounce.as_millis());
         }
-        info!("    Debounce: {:?}", key.debounce());
         info!("    Active Low: {:?}", key.active_low);
         info!("    Repeat: {}", key.repeat);
         if let Some(delay) = key.repeat_delay() {
