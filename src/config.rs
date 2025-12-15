@@ -17,10 +17,10 @@ pub struct Config {
     /// polling interval in milliseconds
     poll_interval_ms: u64,
     /// Keys configuration
-    #[serde(rename = "key")]
+    #[serde(rename = "key", default)]
     pub keys: Vec<KeyConfig>,
     /// Power switches configuration
-    #[serde(rename = "powerswitch")]
+    #[serde(rename = "powerswitch", default)]
     pub power_switches: Vec<PowerSwitchConfig>,
 }
 
@@ -130,6 +130,11 @@ mod tests {
         assert_eq!(config.power_switches.len(), 1);
     }
 
+    #[test]
+    fn test_should_parse_config_without_arrays() {
+        let _config: Config = toml::from_str(CONFIG_WNO_ARRAYS).unwrap();
+    }
+
     const DEFAULT_CONFIG: &str = r#"
 default_debounce_ms = 20 # default debounce time in milliseconds
 default_active_low = true # default active_low setting for keys; if true, key is active when GPIO is low
@@ -152,5 +157,11 @@ repeat_rate_ms = 80
 [[powerswitch]]
 gpio = 27
 active_low = false
+    "#;
+
+    const CONFIG_WNO_ARRAYS: &str = r#"
+default_debounce_ms = 20 # default debounce time in milliseconds
+default_active_low = true # default active_low setting for keys; if true, key is active when GPIO is low
+poll_interval_ms = 5 # polling interval in milliseconds
     "#;
 }

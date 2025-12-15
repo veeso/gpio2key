@@ -7,10 +7,10 @@ pub use self::log_level::LogLevel;
 /// gpio2key command line arguments
 #[derive(Debug, argh::FromArgs)]
 pub struct Args {
-    /// path to configuration file
+    /// path to configuration file (default: config.toml)
     #[argh(option, short = 'c', default = "PathBuf::from(\"config.toml\")")]
     pub config: PathBuf,
-    /// chip device (e.g., /dev/gpiochip0)
+    /// chip device (default: /dev/gpiochip0)
     #[argh(option, short = 'd', default = "PathBuf::from(\"/dev/gpiochip0\")")]
     pub device: PathBuf,
     /// log level (error, warn, info, debug, trace)
