@@ -34,7 +34,12 @@ impl LinuxGpio {
 
 impl Gpio for LinuxGpio {
     fn read(&mut self) -> anyhow::Result<GpioValue> {
-        match self.handle.get_value()? {
+        let value = self.handle.get_value()?;
+        trace!(
+            "Read GPIO {gpio} value: {value}",
+            gpio = self.handle.line().offset()
+        );
+        match value {
             0 => Ok(GpioValue::Disabled),
             1 => Ok(GpioValue::Enabled),
             v => Err(anyhow::anyhow!("Unexpected GPIO value: {}", v)),
