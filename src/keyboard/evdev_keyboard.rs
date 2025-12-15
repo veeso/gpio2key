@@ -18,6 +18,7 @@ impl EvdevKeyboard {
         let mut keys = AttributeSet::new();
         for &key in listen_to {
             keys.insert(key);
+            debug!("Listening to keycode: {:?}", key);
         }
 
         VirtualDevice::builder()?
@@ -31,6 +32,7 @@ impl EvdevKeyboard {
     /// Emit a key event with the specified value
     fn emit(&mut self, keycode: evdev::KeyCode, value: i32) -> anyhow::Result<()> {
         let ev = *KeyEvent::new_now(keycode, value);
+        debug!("Emitting key event: {:?}", ev);
 
         self.device
             .emit(&[ev])

@@ -59,25 +59,25 @@ where
     /// Handle polling of a single key
     fn handle_key_poll(key: &mut KeyState<G>, keyboard: &mut K) {
         // read value
-        debug!("Polling key {:?}", key.keycode);
+        trace!("Polling key {:?}", key.keycode);
         let Ok(value) = key.gpio.read() else {
             error!("Failed to read GPIO for key {:?}", key.keycode);
             return;
         };
-        debug!("Read GPIO value {:?} for key {:?}", value, key.keycode);
+        trace!("Read GPIO value {:?} for key {:?}", value, key.keycode);
         // handle value
         let res = match key.handle_gpio_value(value) {
             OutEvent::None => Ok(()),
             OutEvent::Press => {
-                debug!("Key {:?} pressed", key.keycode);
+                info!("Key {:?} pressed", key.keycode);
                 keyboard.key_down(key.keycode.keycode())
             }
             OutEvent::Release => {
-                debug!("Key {:?} released", key.keycode);
+                info!("Key {:?} released", key.keycode);
                 keyboard.key_up(key.keycode.keycode())
             }
             OutEvent::Repeat => {
-                debug!("Key {:?} repeat", key.keycode);
+                info!("Key {:?} repeat", key.keycode);
                 keyboard.key_repeat(key.keycode.keycode())
             }
         };

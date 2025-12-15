@@ -21,6 +21,7 @@ impl LinuxGpio {
         let mut flags = LineRequestFlags::INPUT;
         if active_low {
             flags |= LineRequestFlags::ACTIVE_LOW;
+            debug!("Setting line ACTIVE_LOW for GPIO {gpio}");
         }
 
         // request handle
