@@ -12,7 +12,7 @@
 
 ## Introduction
 
-gpio2key is a Linux utility written in Rust that maps GPIO pins to keyboard key events using the evdev interface.
+gpio2key is a Raspberry Pi utility written in Rust that maps GPIO pins to keyboard key events using the evdev interface.
 It is particularly useful for embedded systems like Raspberry Pi, where physical buttons connected to GPIO pins can
 be used to simulate keyboard input.
 

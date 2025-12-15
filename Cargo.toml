@@ -2,7 +2,7 @@
 name = "gpio2key"
 version = "0.1.0"
 edition = "2024"
-description = "A utility to map GPIO events to keyboard events"
+description = "A Raspberry Pi utility to map GPIO events to keyboard events"
 authors = ["Christian Visintin <christian.visintin@veeso.dev>"]
 categories = [
   "command-line-utilities",
@@ -21,9 +21,9 @@ argh = "0.1"
 ctrlc = "3"
 env_logger = "0.11"
 evdev = "0.13"
-gpio-cdev = "0.6"
 libc = "0.2"
 log = "0.4"
+rppal = "0.22"
 serde = "1"
 toml = "0.9"
 

@@ -13,7 +13,7 @@ use std::sync::atomic::AtomicBool;
 use std::time::Duration;
 
 use self::config::Config;
-use self::gpio::LinuxGpio;
+use self::gpio::RaspberryGpio;
 use self::input_listener::{
     InputListener, InputListenerConfig, KeyConfig, PowerSwitch, RepeatConfig,
 };
@@ -45,7 +45,7 @@ fn main() -> anyhow::Result<()> {
         .keys
         .iter()
         .map(|k| {
-            LinuxGpio::try_new(
+            RaspberryGpio::try_new(
                 &args.device,
                 k.gpio,
                 k.active_low.unwrap_or(config.default_active_low),
@@ -69,7 +69,7 @@ fn main() -> anyhow::Result<()> {
         .power_switches
         .iter()
         .map(|ps| {
-            LinuxGpio::try_new(&args.device, ps.gpio, ps.active_low)
+            RaspberryGpio::try_new(&args.device, ps.gpio, ps.active_low)
                 .map(|gpio| PowerSwitch { gpio })
         })
         .collect::<Result<Vec<_>, _>>()?;

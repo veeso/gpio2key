@@ -1,11 +1,13 @@
 mod linux;
 #[cfg(test)]
 mod mock;
+mod raspberry;
 
 pub use self::linux::LinuxGpio;
 #[cfg(test)]
 #[allow(unused)]
 pub use self::mock::MockGpio;
+pub use self::raspberry::RaspberryGpio;
 
 /// GPIO value representation.
 ///
