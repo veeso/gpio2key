@@ -243,6 +243,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "gpio-cdev"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "09831ec59b80be69e75d29cf36e16afbbe5fd1af9c1bf4689ad91c77db5aa6a6"
+dependencies = [
+ "bitflags",
+ "libc",
+ "nix 0.27.1",
+]
+
+[[package]]
 name = "gpio2key"
 version = "0.1.0"
 dependencies = [
@@ -251,6 +262,7 @@ dependencies = [
  "ctrlc",
  "env_logger",
  "evdev",
+ "gpio-cdev",
  "libc",
  "log",
  "rppal",
@@ -328,6 +340,17 @@ name = "memchr"
 version = "2.7.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f52b00d39961fc5b2736ea853c9cc86238e165017a493d1d5c8eac6bdc4cc273"
+
+[[package]]
+name = "nix"
+version = "0.27.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2eb04e9c688eff1c89d72b407f168cf79bb9e867a9d3323ed6c01519eb9cc053"
+dependencies = [
+ "bitflags",
+ "cfg-if",
+ "libc",
+]
 
 [[package]]
 name = "nix"

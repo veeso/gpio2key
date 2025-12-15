@@ -8,6 +8,7 @@ mod gpio;
 mod input_listener;
 mod keyboard;
 
+use std::path::Path;
 use std::sync::Arc;
 use std::sync::atomic::AtomicBool;
 use std::time::Duration;
@@ -18,6 +19,7 @@ use self::input_listener::{
     InputListener, InputListenerConfig, KeyConfig, PowerSwitch, RepeatConfig,
 };
 use self::keyboard::EvdevKeyboard;
+use crate::gpio::LinuxGpio;
 
 const DEFAULT_REPEAT_DELAY: Duration = Duration::from_millis(500);
 const DEFAULT_REPEAT_RATE: Duration = Duration::from_millis(100);
@@ -39,14 +41,85 @@ fn main() -> anyhow::Result<()> {
     let keyboard = EvdevKeyboard::try_new(&keys)?;
     info!("Keyboard device initialized.");
 
+    // run application
+    if args.raspberry {
+        info!("Running on Raspberry Pi board.");
+        run_on_raspberry_pi(config, keyboard)?;
+    } else {
+        info!("Running on generic Linux system.");
+        run_on_linux_generic(config, keyboard, &args.device)?;
+    }
+
+    Ok(())
+}
+
+fn run_on_raspberry_pi(config: Config, keyboard: EvdevKeyboard) -> anyhow::Result<()> {
     // setup gpios
     debug!("Initializing GPIOs...");
     let keys = config
         .keys
         .iter()
         .map(|k| {
-            RaspberryGpio::try_new(
-                &args.device,
+            RaspberryGpio::try_new(k.gpio, k.active_low.unwrap_or(config.default_active_low)).map(
+                |gpio| KeyConfig {
+                    gpio,
+                    keycode: k.keycode,
+                    debounce: k.debounce().unwrap_or_else(|| config.default_debounce()),
+                    repeat: if k.repeat {
+                        Some(RepeatConfig {
+                            delay: k.repeat_delay().unwrap_or(DEFAULT_REPEAT_DELAY),
+                            rate: k.repeat_rate().unwrap_or(DEFAULT_REPEAT_RATE),
+                        })
+                    } else {
+                        None
+                    },
+                },
+            )
+        })
+        .collect::<Result<Vec<_>, _>>()?;
+    let power_switches = config
+        .power_switches
+        .iter()
+        .map(|ps| RaspberryGpio::try_new(ps.gpio, ps.active_low).map(|gpio| PowerSwitch { gpio }))
+        .collect::<Result<Vec<_>, _>>()?;
+    info!("GPIOs initialized.");
+
+    // setup ctrlc handler
+    let exit = Arc::new(AtomicBool::default());
+    {
+        let exit = exit.clone();
+        ctrlc::set_handler(move || {
+            exit.store(true, std::sync::atomic::Ordering::SeqCst);
+        })
+        .expect("Error setting Ctrl-C handler");
+    }
+
+    // setup input listener
+    let config = InputListenerConfig {
+        exit,
+        keyboard,
+        keys,
+        power_switches,
+        poll_interval: config.poll_interval(),
+    };
+    InputListener::new(config).run();
+
+    Ok(())
+}
+
+fn run_on_linux_generic(
+    config: Config,
+    keyboard: EvdevKeyboard,
+    device: &Path,
+) -> anyhow::Result<()> {
+    // setup gpios
+    debug!("Initializing GPIOs...");
+    let keys = config
+        .keys
+        .iter()
+        .map(|k| {
+            LinuxGpio::try_new(
+                device,
                 k.gpio,
                 k.active_low.unwrap_or(config.default_active_low),
             )
@@ -69,8 +142,7 @@ fn main() -> anyhow::Result<()> {
         .power_switches
         .iter()
         .map(|ps| {
-            RaspberryGpio::try_new(&args.device, ps.gpio, ps.active_low)
-                .map(|gpio| PowerSwitch { gpio })
+            LinuxGpio::try_new(device, ps.gpio, ps.active_low).map(|gpio| PowerSwitch { gpio })
         })
         .collect::<Result<Vec<_>, _>>()?;
     info!("GPIOs initialized.");

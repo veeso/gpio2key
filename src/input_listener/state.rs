@@ -97,7 +97,7 @@ impl State {
     fn handle_gpio_disabled(self, debounce: Duration) -> (Self, OutEvent) {
         match self {
             // if pressed, and debounced, go to released
-            Self::Pressed { since } if self.is_debounced(debounce) => (
+            Self::Pressed { .. } if self.is_debounced(debounce) => (
                 Self::Released {
                     since: Instant::now(),
                 },
@@ -133,7 +133,7 @@ impl State {
         // this matches ONLY with the enabled state. In any other case, we short-circuit to Released
         match self {
             // if released, and debounced, go to pressed
-            Self::Released { since } if self.is_debounced(debounce) => (
+            Self::Released { .. } if self.is_debounced(debounce) => (
                 Self::Pressed {
                     since: Instant::now(),
                 },

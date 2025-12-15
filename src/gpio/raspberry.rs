@@ -1,48 +1,36 @@
-use std::path::Path;
-
-use gpio_cdev::{Chip, LineHandle, LineRequestFlags};
+use rppal::gpio::{Gpio as RrppalGpio, InputPin};
 
 use crate::gpio::{Gpio, GpioValue};
 
 pub struct RaspberryGpio {
-    handle: LineHandle,
+    active_low: bool,
+    pin: InputPin,
 }
 
 impl RaspberryGpio {
     /// Create a new [`RaspberryGpio`] instance for the specified GPIO pin
-    pub fn try_new(device: &Path, gpio: u8, active_low: bool) -> anyhow::Result<Self> {
-        debug!("Opening chip at {:?}", device);
-        let mut chip = Chip::new(device)
-            .map_err(|e| anyhow::anyhow!("Failed to open GPIO chip {:?}: {}", device, e))?;
-        debug!("Requesting line for GPIO {}", gpio);
-        let line = chip.get_line(gpio as u32)?;
-        debug!("Configuring line for GPIO {gpio}");
+    pub fn try_new(gpio: u8, active_low: bool) -> anyhow::Result<Self> {
+        let pin = RrppalGpio::new()
+            .map_err(|e| anyhow::anyhow!("Failed to access GPIO: {}", e))?
+            .get(gpio)
+            .map_err(|e| anyhow::anyhow!("Failed to get GPIO pin {}: {}", gpio, e))?
+            .into_input_pullup();
 
-        let mut flags = LineRequestFlags::INPUT;
-        if active_low {
-            flags |= LineRequestFlags::ACTIVE_LOW;
-            debug!("Setting line ACTIVE_LOW for GPIO {gpio}");
-        }
-
-        // request handle
-        debug!("Requesting line handle for GPIO {gpio}");
-        let handle = line.request(flags, 0, "gpio2key")?;
-
-        Ok(RaspberryGpio { handle })
+        Ok(RaspberryGpio { active_low, pin })
     }
 }
 
 impl Gpio for RaspberryGpio {
     fn read(&mut self) -> anyhow::Result<GpioValue> {
-        let value = self.handle.get_value()?;
-        trace!(
-            "Read GPIO {gpio} value: {value}",
-            gpio = self.handle.line().offset()
-        );
-        match value {
-            0 => Ok(GpioValue::Disabled),
-            1 => Ok(GpioValue::Enabled),
-            v => Err(anyhow::anyhow!("Unexpected GPIO value: {}", v)),
+        let value = self.pin.read();
+        trace!("Read GPIO {gpio} value: {value}", gpio = self.pin.pin());
+        match (value, self.active_low) {
+            (rppal::gpio::Level::Low, false) | (rppal::gpio::Level::High, true) => {
+                Ok(GpioValue::Disabled)
+            }
+            (rppal::gpio::Level::High, false) | (rppal::gpio::Level::Low, true) => {
+                Ok(GpioValue::Enabled)
+            }
         }
     }
 }
