@@ -27,11 +27,13 @@ where
         let (new_state, out_event) =
             self.state
                 .handle_gpio_value(value, self.repeat.as_ref(), self.debounce);
-        info!(
-            "Key {keycode:?} state change: {old_state:?} -> {new_state:?}, event: {out_event:?}",
-            keycode = self.keycode,
-            old_state = self.state,
-        );
+        if out_event != OutEvent::None {
+            info!(
+                "Key {keycode:?} state change: {old_state:?} -> {new_state:?}, event: {out_event:?}",
+                keycode = self.keycode,
+                old_state = self.state,
+            );
+        }
         self.state = new_state;
 
         out_event
