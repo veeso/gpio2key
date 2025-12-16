@@ -7,7 +7,7 @@
 [![ko-fi](https://img.shields.io/badge/donate-ko--fi-red)](https://ko-fi.com/veeso)
 [![conventional-commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits&logoColor=white)](https://conventionalcommits.org)
 
-[![ci](https://github.com/veeso/gpio2key/actions/workflows/ci.yml/badge.svg)](https://github.com/veeso/gpio2key/actions)
+[![build-test](https://github.com/veeso/gpio2key/actions/workflows/cargo.yml/badge.svg)](https://github.com/veeso/gpio2key/actions/workflows/cargo.yml)
 
 ## Introduction
 
