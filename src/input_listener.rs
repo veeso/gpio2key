@@ -49,7 +49,7 @@ where
                 Self::handle_key_poll(key, &mut self.keyboard);
             }
             for switch in &mut self.power_switches {
-                Self::handle_power_switch_poll(switch);
+                Self::handle_power_switch_poll(switch, &self.exit);
             }
             trace!("tick");
             std::thread::sleep(self.poll_interval);
@@ -87,7 +87,7 @@ where
     }
 
     /// Handle polling of a single power switch
-    fn handle_power_switch_poll(switch: &mut PowerSwitch<G>) {
+    fn handle_power_switch_poll(switch: &mut PowerSwitch<G>, exit: &Arc<AtomicBool>) {
         let value = match switch.gpio.read() {
             Ok(v) => v,
             Err(e) => {
@@ -106,6 +106,8 @@ where
                     );
                 }
             }
+            // set exit
+            exit.store(true, std::sync::atomic::Ordering::SeqCst);
         }
     }
 }
