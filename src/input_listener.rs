@@ -104,10 +104,12 @@ where
                         "Failed to shut down system: {}",
                         std::io::Error::last_os_error()
                     );
+                } else {
+                    info!("System shutdown initiated");
+                    // set exit
+                    exit.store(true, std::sync::atomic::Ordering::SeqCst);
                 }
             }
-            // set exit
-            exit.store(true, std::sync::atomic::Ordering::SeqCst);
         }
     }
 }
