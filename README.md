@@ -32,7 +32,7 @@ Other options:
 - `--raspberry`: Enable Raspberry Pi specific GPIO setup. This will also setup gpio as pull-up inputs.
 - `--help`: Show help information
 
-> ![NOTE]
+> [!NOTE]
 >
 > On Linux, there is no way from `gpio-cdev` to set pull-up or pull-down resistors on GPIO pins.
 > So you need to set them up manually before running the program, or use a hardware solution (e.g. external resistors).
