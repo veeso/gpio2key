@@ -13,6 +13,9 @@ pub struct Args {
     /// chip device (default: /dev/gpiochip0)
     #[argh(option, short = 'd', default = "PathBuf::from(\"/dev/gpiochip0\")")]
     pub device: PathBuf,
+    /// keyboard name (default: gpio2key)
+    #[argh(option, short = 'k', default = "String::from(\"gpio2key\")")]
+    pub keyboard_name: String,
     /// log level (error, warn, info, debug, trace)
     #[argh(option, short = 'l', default = "LogLevel::Info")]
     pub log_level: LogLevel,

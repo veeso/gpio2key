@@ -38,7 +38,7 @@ fn main() -> anyhow::Result<()> {
     // setup keyboard
     debug!("Initializing keyboard device...");
     let keys: Vec<_> = config.keys.iter().map(|k| k.keycode.keycode()).collect();
-    let keyboard = EvdevKeyboard::try_new(&keys)?;
+    let keyboard = EvdevKeyboard::try_new(&args.keyboard_name, &keys)?;
     info!("Keyboard device initialized.");
 
     // run application

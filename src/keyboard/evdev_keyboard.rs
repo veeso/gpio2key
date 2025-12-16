@@ -14,7 +14,7 @@ pub struct EvdevKeyboard {
 
 impl EvdevKeyboard {
     /// Create a new [`EvdevKeyboard`] that listens to the specified keycodes
-    pub fn try_new(listen_to: &[KeyCode]) -> anyhow::Result<Self> {
+    pub fn try_new(name: &str, listen_to: &[KeyCode]) -> anyhow::Result<Self> {
         let mut keys = AttributeSet::new();
         for &key in listen_to {
             keys.insert(key);
@@ -22,7 +22,7 @@ impl EvdevKeyboard {
         }
 
         VirtualDevice::builder()?
-            .name("gpio2key virtual keyboard")
+            .name(name)
             .with_keys(&keys)?
             .build()
             .map(|device| EvdevKeyboard { device })
