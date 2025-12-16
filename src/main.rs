@@ -80,7 +80,10 @@ fn run_on_raspberry_pi(config: Config, keyboard: EvdevKeyboard) -> anyhow::Resul
     let power_switches = config
         .power_switches
         .iter()
-        .map(|ps| RaspberryGpio::try_new(ps.gpio, ps.active_low).map(|gpio| PowerSwitch { gpio }))
+        .map(|ps| {
+            RaspberryGpio::try_new(ps.gpio, ps.active_low.unwrap_or(config.default_active_low))
+                .map(|gpio| PowerSwitch { gpio })
+        })
         .collect::<Result<Vec<_>, _>>()?;
     info!("GPIOs initialized.");
 
@@ -142,7 +145,12 @@ fn run_on_linux_generic(
         .power_switches
         .iter()
         .map(|ps| {
-            LinuxGpio::try_new(device, ps.gpio, ps.active_low).map(|gpio| PowerSwitch { gpio })
+            LinuxGpio::try_new(
+                device,
+                ps.gpio,
+                ps.active_low.unwrap_or(config.default_active_low),
+            )
+            .map(|gpio| PowerSwitch { gpio })
         })
         .collect::<Result<Vec<_>, _>>()?;
     info!("GPIOs initialized.");
@@ -197,6 +205,9 @@ fn log_config(config: &Config) {
     info!("  Power Switches:");
     for ps in &config.power_switches {
         info!("    GPIO {}", ps.gpio);
-        info!("    Active Low: {}", ps.active_low);
+        info!(
+            "    Active Low: {}",
+            ps.active_low.unwrap_or(config.default_active_low)
+        );
     }
 }

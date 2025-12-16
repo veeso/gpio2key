@@ -84,7 +84,7 @@ pub struct PowerSwitchConfig {
     /// GPIO pin number
     pub gpio: u8,
     /// Whether the switch is active low; if true, switch is active when GPIO is low
-    pub active_low: bool,
+    pub active_low: Option<bool>,
 }
 
 #[cfg(test)]
@@ -117,7 +117,7 @@ mod tests {
 
         assert_eq!(config.power_switches.len(), 1);
         assert_eq!(config.power_switches[0].gpio, 27);
-        assert_eq!(config.power_switches[0].active_low, false);
+        assert_eq!(config.power_switches[0].active_low, Some(false));
     }
 
     #[test]
