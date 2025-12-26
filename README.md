@@ -100,6 +100,17 @@ Each power switch can have the following parameter:
 - `gpio`: GPIO pin number (required)
 - `active_low`: If true, the power switch is active when the GPIO pin is low (default: `true`)
 
+## Build for RetroPie
+
+For building on RetroPie and ARM32 systems, you need to follow these steps:
+
+```bash
+rustup target add armv7-unknown-linux-musleabihf
+sudo apt install -y musl-tools gcc-arm-linux-gnueabihf
+
+cargo build --release --target armv7-unknown-linux-musleabihf
+```
+
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
